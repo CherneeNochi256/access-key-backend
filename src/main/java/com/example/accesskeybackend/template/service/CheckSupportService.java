@@ -11,14 +11,17 @@ import java.net.URL;
 public class CheckSupportService {
     public ResponseEntity<SuccessResponse> checkIPv6SupportBySiteUrl(String siteUrl) {
 
-        if (!siteUrl.startsWith("https://")) {
-            siteUrl = "https://" + siteUrl;
+        String host = siteUrl == null ? "" : siteUrl;
+
+        if (host.startsWith("https://")) {
+            host = host.substring("https://".length());
+        } else if (host.startsWith("http://")) {
+            host = host.substring("http://".length());
         }
+        host = host.split("/")[0];
 
         boolean valid = false;
         try {
-            URL url = new URL(siteUrl);
-            String host = url.getHost();
             InetAddress[] addresses = InetAddress.getAllByName(host);
             for (InetAddress address : addresses) {
                 if (address instanceof Inet6Address) {
